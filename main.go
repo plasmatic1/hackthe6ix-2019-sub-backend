@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net"
 	"math"
+	"net"
+	"strings"
 )
 
 type PlayerPacket struct {
@@ -53,7 +54,13 @@ func handlePlayer(conn net.Conn, outCh chan PlayerPacket, id int32, distInCh cha
 	for {
 		pack, err := waitForPacket(reader)
 		if err != nil {
-			fmt.Printf("[ERROR (ID: %d)]: %s\n", id, err.Error())
+			if strings.Contains(err.Error(), "An existing connection was forcibly closed by the remote host.") {
+				fmt.Printf("Player (ID: %d) forcibly quit\n", id)
+				outCh <- PlayerPacket{id, Quit{}}
+				return
+			} else {
+				fmt.Printf("[ERROR (ID: %d)]: %s\n", id, err.Error())
+			}
 		} else {
 			outCh <- PlayerPacket{id, pack}
 
@@ -69,6 +76,8 @@ func handlePlayer(conn net.Conn, outCh chan PlayerPacket, id int32, distInCh cha
 					fmt.Printf("[ERROR (ID: %d)]: JSON OUT ERROR: %s\n", id, err.Error())
 				} else {
 					outStr = append(outStr, '\n')
+					fmt.Println(outStr)
+
 					if n, err := conn.Write(outStr); err != nil {
 						fmt.Printf("[ERROR (ID: %d)]: SOCK WRITE ERROR: %s\n", id, err.Error())
 					} else {
@@ -82,6 +91,7 @@ func handlePlayer(conn net.Conn, outCh chan PlayerPacket, id int32, distInCh cha
 	}
 }
 
+// Variables to keep track of players
 var playerChs = make(map[int32]chan float64) // Channels to send dist data (by ID)
 var locs = make(map[int32]map[int32]Location) // List of locations by team
 var team = make(map[int32]int32) // Map of teams (by ID)
@@ -108,6 +118,9 @@ func handlePackets(ch chan PlayerPacket) {
 				}
 
 				// Set loc
+				if locs[playerTeam] == nil { // Make map if it is nil
+					locs[playerTeam] = make(map[int32]Location)
+				}
 				locs[playerTeam][playerPack.id] = pack
 
 				// Send back dist
@@ -133,8 +146,11 @@ func handlePackets(ch chan PlayerPacket) {
 	}
 }
 
+// Address stuff for connecting
+const ADDR = "0.0.0.0:80"
+
 func main() {
-	server, err := net.Listen("udp", "0.0.0.0:80")
+	server, err := net.Listen("tcp", ADDR)
 	packetCh := make(chan PlayerPacket)
 
 	// Init event handler
@@ -143,6 +159,8 @@ func main() {
 	if err != nil {
 		fmt.Printf("[ERROR]: Listen Error: %s\n", err.Error())
 	} else {
+		fmt.Printf("Started listening on %s\n", ADDR)
+
 		for {
 			conn, err := server.Accept()
 
@@ -153,7 +171,7 @@ func main() {
 				playerChs[id] = make(chan float64)
 				team[id] = 0
 
-				go handlePlayer(conn, id, playerChs[id])
+				go handlePlayer(conn, packetCh, id, playerChs[id])
 			}
 		}
 	}
