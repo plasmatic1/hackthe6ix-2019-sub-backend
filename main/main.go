@@ -146,7 +146,7 @@ func handlePackets(ch chan PlayerPacket) {
 }
 
 // Address stuff for connecting
-const ADDR = "0.0.0.0:80"
+const ADDR = "0.0.0.0:4200"
 
 func main() {
 	server, err := net.Listen("tcp", ADDR)

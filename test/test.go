@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const ADDR = "0.0.0.0:80"
+const ADDR = "0.0.0.0:4200"
 
 func waitForLines(conn net.Conn) {
 	reader := bufio.NewReader(conn)
