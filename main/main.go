@@ -33,7 +33,7 @@ func waitForPacket(reader *bufio.Reader) (pack interface{}, retErr error) {
 
 	packMap := make(map[string]interface{})
 	if err := json.Unmarshal([]byte(line), &packMap); err != nil {
-		panic(fmt.Sprintf("JSON Parse Error: %s", err.Error()))
+		panic(fmt.Sprintf("JSON Parse Error: %s, TEXT: %s", err.Error(), line))
 	}
 
 	pack, err = ParsePacket(packMap)
