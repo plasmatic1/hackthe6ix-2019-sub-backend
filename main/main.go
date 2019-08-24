@@ -68,7 +68,7 @@ func handlePlayer(conn net.Conn, outCh chan PlayerPacket, id int32, distInCh cha
 			// Wait for system to send back distance info
 			case Location:
 				distObj := struct {
-					dist float64
+					Dist float64
 				} { <- distInCh }
 
 				outStr, err := json.Marshal(distObj)
@@ -76,12 +76,11 @@ func handlePlayer(conn net.Conn, outCh chan PlayerPacket, id int32, distInCh cha
 					fmt.Printf("[ERROR (ID: %d)]: JSON OUT ERROR: %s\n", id, err.Error())
 				} else {
 					outStr = append(outStr, '\n')
-					fmt.Println(outStr)
 
-					if n, err := conn.Write(outStr); err != nil {
+					if _, err := conn.Write(outStr); err != nil {
 						fmt.Printf("[ERROR (ID: %d)]: SOCK WRITE ERROR: %s\n", id, err.Error())
 					} else {
-						fmt.Printf("(ID: %d): OUT: Wrote %d bytes\n", id, n)
+						fmt.Printf("(ID: %d): DIST OUT: Wrote %s\n", id, outStr)
 					}
 				}
 			case Quit:

@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Listen Error: %s\n", err.Error())
 	} else {
-		fmt.Printf("Opened testing client at addr %s\n", ADDR)
+		fmt.Printf("Opened test client at addr %s\n", ADDR)
 
 		go waitForLines(conn)
 
