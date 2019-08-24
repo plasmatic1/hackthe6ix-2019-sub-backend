@@ -1,2 +1,4 @@
 
 open.bat
+/venv/
+/__pycache__/

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/hackthe6ix.iml" filepath="$PROJECT_DIR$/.idea/hackthe6ix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/hackthe6ix-backend-redo.iml" filepath="$PROJECT_DIR$/.idea/hackthe6ix-backend-redo.iml" />
     </modules>
   </component>
 </project>
