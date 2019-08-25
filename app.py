@@ -1,9 +1,7 @@
 import json
-import math
-
+import geopy.distance as dist
 from flask import Flask, render_template, redirect
 
-from dist_util import dist
 from id import valid_id, rem_id, add_id
 
 app = Flask(__name__)
@@ -54,14 +52,14 @@ def loc(id, lat, long):
         error(f'SET LOC: Invalid ID: {id}')
         return json.dumps({'error': f'Invalid ID {id}'})
     else:
-        cloc = (lat, long)
+        cloc = (lat, long)  # (Latitude, Longitude)
         locs[id] = cloc
 
         cteam = teams[id]
         best = 1e101  # We're going to define any value >1e100 as infinity
         for oth_id, loc in locs.items():
             if teams[oth_id] != cteam:
-                best = min(best, dist(cloc, loc))
+                best = min(best, float(dist.distance(cloc, loc).m))
 
         print(f'Changed loc of ID {id} to {cloc}')
         return json.dumps({'dist': best, 'error': ''})
