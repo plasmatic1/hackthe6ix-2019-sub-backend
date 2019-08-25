@@ -42,8 +42,14 @@ def add_user():
     return json.dumps({'id': new_id, 'error': ''})
 
 
-@app.route('/loc/<int:id>/<float:lat>/<float:long>/')
+@app.route('/loc/<int:id>/<string:lat>/<string:long>/')
 def loc(id, lat, long):
+    try:
+        lat = float(lat)
+        long = float(long)
+    except ValueError as e:
+        return json.dumps({'error': f'Error while casting to float: {str(e)}'})
+
     if not valid_id(id):
         error(f'SET LOC: Invalid ID: {id}')
         return json.dumps({'error': f'Invalid ID {id}'})
@@ -53,7 +59,7 @@ def loc(id, lat, long):
 
         cteam = teams[id]
         best = math.inf
-        for oth_id, loc in locs:
+        for oth_id, loc in locs.items():
             if teams[oth_id] != cteam:
                 best = min(best, dist(cloc, loc))
 
