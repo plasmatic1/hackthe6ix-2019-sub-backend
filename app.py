@@ -58,7 +58,7 @@ def loc(id, lat, long):
         locs[id] = cloc
 
         cteam = teams[id]
-        best = math.inf
+        best = 1e101  # We're going to define any value >1e100 as infinity
         for oth_id, loc in locs.items():
             if teams[oth_id] != cteam:
                 best = min(best, dist(cloc, loc))
