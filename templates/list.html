@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Display</title>
+
+    <style>
+        td, th {
+            border: 1px solid black;
+            margin: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Team</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Delete</th>
+        <th>Team 0</th>
+        <th>Team 1</th>
+    </tr>
+
+    {% for id, b, c, d in users %}
+        <tr>
+            {% for elem in (id, b, c, d) %}
+                <td>{{ elem }}</td>
+            {% endfor %}
+
+            <td><a href="/del2/{{ id }}/">Delete</a></td>
+            <td><a href="/team2/{{ id }}/0/">Team 0</a></td>
+            <td><a href="/team2/{{ id }}/1/">Team 1</a></td>
+        </tr>
+    {% endfor %}
+</table>
+
+<a href="/add2/">Add user</a>
+</body>
+</html>
